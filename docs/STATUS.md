@@ -1,6 +1,6 @@
 # Status
 
-_Snapshot — rewrite, don't append. Last updated: 2026-11-02 (session 2)._
+_Snapshot — rewrite, don't append. Last updated: 2026-11-02 (end of session 2)._
 
 **Phase:** 1 Discovery (mostly done) · 3 Build foundation (built and tested locally) ·
 visual direction chosen.
