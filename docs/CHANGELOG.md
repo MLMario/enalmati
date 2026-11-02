@@ -3,6 +3,15 @@
 Append-only, newest first. One entry per session or shipped change. Code-level detail
 lives in git; this is what changed and why it matters.
 
+## 2026-11-02 (5)
+
+- Added `origin` remote `https://github.com/MLMario/enalmati.git`; first commit `20bc020`.
+  Push failed: stale GitHub credential in macOS Keychain; Mario to push with a fine-grained token.
+- Node v26.13.0 installed (X-2 closed). Installed `astro` 7.4.5, `@astrojs/check`, `typescript`,
+  `@types/node`; added `"types": ["node"]` to `tsconfig.json`.
+- PLAN-001 step 7 verified: `npm test` 3/3, `npm run build` OK, `astro check` 0 errors,
+  9 sections at 375px and desktop, email only in footer.
+
 ## 2026-11-02 (4)
 
 - Chose visual direction: mix of Bosque editorial + Claridad corporativa (D-016). Q-8 closed.

@@ -27,12 +27,10 @@ Closed items stay in the *Done* table with their close date.
 
 | ID | Item | Status | Notes |
 |---|---|---|---|
-| B-020 | SPEC-001 site foundation: stack, structure, design tokens, Vercel setup. | in progress | Files written; waiting on Node install → PLAN-001 steps 6–9 |
-| B-021 | WhatsApp link system: one source of messages, URL-encoded, 8 variants. | in progress | `src/data/whatsapp.ts` + tests written; not yet run |
+| B-020 | SPEC-001 site foundation: stack, structure, design tokens, Vercel setup. | in progress | Built and tested locally; left: push (token) + Vercel (PLAN-001 steps 8–9) |
 | B-022 | Build sections 1–9 per copy deck. | todo | Split into specs once SPEC-001 is done |
 | B-023 | Footer: email, (social links if Q-6). | todo | |
-
-| B-024 | Create GitHub remote and Vercel project; confirm branch previews work. | todo | Needed for Carolyn reviews |
+| B-024 | Create GitHub remote and Vercel project; confirm branch previews work. | in progress | Remote added; first push waits on Mario's token |
 
 ## Phase 4 — QA & launch
 
@@ -50,3 +48,4 @@ Closed items stay in the *Done* table with their close date.
 | B-000 | Project setup: folder rename, git, docs structure, templates. | 2026-11-02 |
 | B-005 | Pick a visual direction → mix of 1 + 3 (D-016). | 2026-11-02 |
 | B-001 | Inspect live site: static HTML on Netlify, one 788 KB file, inline CSS, 6 base64 images, GA4, Google Fonts (Fraunces, Jost, Inter). Rebuild (D-014). | 2026-11-02 |
+| B-021 | WhatsApp link system: one source of messages, URL-encoded, 8 variants. Tests pass 3/3. | 2026-11-02 |
