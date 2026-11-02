@@ -1,0 +1,36 @@
+/* Design tokens. Values taken from the live site (reference/current-site/index.html)
+   and the logo. Brand base (magenta-led vs green-led) is still open: see BACKLOG B-002. */
+:root {
+  /* Brand */
+  --color-magenta: #8b2252;
+  --color-magenta-hover: #6e1a41;
+  --color-magenta-soft: #f6e9ef;
+  --color-wine: #2b0f1d;      /* dark sections */
+  --color-plum: #2a1420;      /* headings */
+  --color-gold: #c39432;
+  --color-gold-light: #e3c079;
+  --color-forest: #2c4a2e;    /* logo, favicon, theme-color */
+  --color-sage: #4a7a63;
+
+  /* Neutrals */
+  --color-bg: #ffffff;
+  --color-bg-alt: #fcf8fa;
+  --color-text: #33272c;
+  --color-text-muted: #7a6a71;
+  --color-line: rgba(139, 34, 82, 0.13);
+
+  /* WhatsApp CTA */
+  --color-cta: var(--color-magenta);
+  --color-cta-hover: var(--color-magenta-hover);
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-label: 'Jost', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Layout */
+  --radius: 18px;
+  --max-width: 1160px;
+  --gutter: clamp(16px, 4vw, 24px);
+  --section-space: clamp(64px, 10vw, 120px);
+}

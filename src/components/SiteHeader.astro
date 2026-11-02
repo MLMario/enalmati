@@ -1,0 +1,31 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/images/logo.png';
+import WhatsAppButton from './WhatsAppButton.astro';
+---
+
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a href="#inicio" aria-label="En Almati, inicio">
+      <Image src={logo} alt="En Almati" width={120} />
+    </a>
+    <WhatsAppButton message="general" variant="secondary">WhatsApp</WhatsAppButton>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 0.75rem;
+  }
+</style>

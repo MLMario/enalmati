@@ -1,0 +1,39 @@
+---
+// The only CTA on the site (D-002). Always pass a message key from data/whatsapp.ts.
+import { waLink, type WhatsAppMessageKey } from '../data/whatsapp.ts';
+
+interface Props {
+  message: WhatsAppMessageKey;
+  variant?: 'primary' | 'secondary';
+}
+
+const { message, variant = 'primary' } = Astro.props;
+---
+
+<a
+  class:list={['wa-button', `wa-button--${variant}`]}
+  href={waLink(message)}
+  target="_blank"
+  rel="noopener"
+  data-wa={message}
+>
+  <slot>Escríbenos por WhatsApp</slot>
+</a>
+
+<style>
+  .wa-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.9em 1.6em;
+    border-radius: 999px;
+    font-family: var(--font-label);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .wa-button--primary { background: var(--color-cta); color: #fff; }
+  .wa-button--primary:hover { background: var(--color-cta-hover); }
+  .wa-button--secondary { border: 1.5px solid var(--color-cta); color: var(--color-cta); }
+  .wa-button--secondary:hover { background: var(--color-magenta-soft); }
+</style>

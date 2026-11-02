@@ -1,0 +1,25 @@
+---
+// Scaffold-only stand-in for a section whose copy isn't written yet.
+// Delete each usage once its section is built from the copy deck (SPEC-002).
+interface Props {
+  label: string;
+  source: string;
+}
+
+const { label, source } = Astro.props;
+---
+
+<div class="placeholder">
+  <p class="eyebrow">Pendiente</p>
+  <h2>{label}</h2>
+  <p>Contenido: {source} → SPEC-002</p>
+</div>
+
+<style>
+  .placeholder {
+    border: 2px dashed var(--color-line);
+    border-radius: var(--radius);
+    padding: 2rem;
+    color: var(--color-text-muted);
+  }
+</style>

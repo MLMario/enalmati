@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Hero from '../components/sections/Hero.astro';
+import Beneficios from '../components/sections/Beneficios.astro';
+import Servicios from '../components/sections/Servicios.astro';
+import ComoFunciona from '../components/sections/ComoFunciona.astro';
+import Programas from '../components/sections/Programas.astro';
+import PorQue from '../components/sections/PorQue.astro';
+import QuienesSomos from '../components/sections/QuienesSomos.astro';
+import PreguntasFrecuentes from '../components/sections/PreguntasFrecuentes.astro';
+import CtaFinal from '../components/sections/CtaFinal.astro';
+
+// Title and description are placeholders until the copy deck (SPEC-002).
+const title = 'En Almati · Bienestar integral para empresas';
+const description =
+  'Programas de bienestar integral para empresas en Lima: sesiones vivenciales y talleres de desarrollo, a medida de cada organización.';
+---
+
+<BaseLayout title={title} description={description}>
+  <SiteHeader />
+  <main>
+    <Hero />
+    <Beneficios />
+    <Servicios />
+    <ComoFunciona />
+    <Programas />
+    <PorQue />
+    <QuienesSomos />
+    <PreguntasFrecuentes />
+    <CtaFinal />
+  </main>
+  <SiteFooter />
+</BaseLayout>
