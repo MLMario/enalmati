@@ -24,7 +24,7 @@ TS module so every CTA is generated, not hand-encoded. Tests use Node's built-in
 | 5 | Nine section placeholders + page | `src/components/sections/`, `src/pages/` | [x] |
 | 6 | Install Node LTS (Mario) | — | [x] v26.13.0 |
 | 7 | `npm install astro`, build, test, dev check | `package.json` | [x] |
-| 8 | First commit, push to a remote | — | [~] committed; push waits on GitHub token |
+| 8 | First commit, push to a remote | — | [x] |
 | 9 | Create Vercel project, link repo, check preview | — | [ ] |
 
 ## Risks

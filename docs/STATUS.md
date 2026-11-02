@@ -11,8 +11,7 @@ visual direction chosen.
 - Astro scaffold (SPEC-001 / PLAN-001) **installed, built and tested** on Node 26 (D-017):
   `npm test` 3/3, `npm run build` OK, `astro check` 0 errors, 9 placeholder sections render
   at 375px and desktop. Steps 1–7 done.
-- Git: remote `origin` = https://github.com/MLMario/enalmati.git. First commit `20bc020`
-  made; **not pushed yet**. Build/test commit follows it.
+- Git: `main` pushed to https://github.com/MLMario/enalmati.git (token auth via Keychain works).
 - Style canvas with 4 directions: https://claude.ai/artifact/AzYAou8Jdw1SSW9f7J94uP
   (private). Direction chosen: **mix of 1 Bosque editorial + 3 Claridad corporativa** (D-016).
 
@@ -20,7 +19,7 @@ visual direction chosen.
 
 | ID | Blocker | Blocks | Next action |
 |---|---|---|---|
-| X-3 | First push rejected: old GitHub credential in Keychain (L-006). | Vercel project and branch previews (B-024, PLAN-001 steps 8–9). | Mario creates a fine-grained token (repo `enalmati`, Contents read/write), clears the Keychain entry, runs `git push -u origin main`. |
+| — | None. | | |
 
 ## Open questions
 
@@ -37,7 +36,7 @@ visual direction chosen.
 
 ## Next session — start here
 
-1. If the push has landed: PLAN-001 step 9 — create the Vercel project from the GitHub repo,
+1. PLAN-001 step 9 — create the Vercel project from the GitHub repo,
    confirm a branch preview (B-024).
 2. **B-006:** explore the 1+3 mix on the style canvas (new artboards; keep the 4 originals).
    Hero with logistics box, benefits, how it works, programs; desktop + 375px.

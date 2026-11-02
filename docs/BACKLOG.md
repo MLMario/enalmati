@@ -27,10 +27,10 @@ Closed items stay in the *Done* table with their close date.
 
 | ID | Item | Status | Notes |
 |---|---|---|---|
-| B-020 | SPEC-001 site foundation: stack, structure, design tokens, Vercel setup. | in progress | Built and tested locally; left: push (token) + Vercel (PLAN-001 steps 8–9) |
+| B-020 | SPEC-001 site foundation: stack, structure, design tokens, Vercel setup. | in progress | Built, tested, pushed; left: Vercel (PLAN-001 step 9) |
 | B-022 | Build sections 1–9 per copy deck. | todo | Split into specs once SPEC-001 is done |
 | B-023 | Footer: email, (social links if Q-6). | todo | |
-| B-024 | Create GitHub remote and Vercel project; confirm branch previews work. | in progress | Remote added; first push waits on Mario's token |
+| B-024 | Create GitHub remote and Vercel project; confirm branch previews work. | in progress | GitHub done (`main` pushed); Vercel next |
 
 ## Phase 4 — QA & launch
 

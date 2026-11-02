@@ -6,7 +6,7 @@ lives in git; this is what changed and why it matters.
 ## 2026-11-02 (5)
 
 - Added `origin` remote `https://github.com/MLMario/enalmati.git`; first commit `20bc020`.
-  Push failed: stale GitHub credential in macOS Keychain; Mario to push with a fine-grained token.
+  First push failed (stale Keychain credential, L-006); after Mario set a fine-grained token, `main` pushed. X-3 closed.
 - Node v26.13.0 installed (X-2 closed). Installed `astro` 7.4.5, `@astrojs/check`, `typescript`,
   `@types/node`; added `"types": ["node"]` to `tsconfig.json`.
 - PLAN-001 step 7 verified: `npm test` 3/3, `npm run build` OK, `astro check` 0 errors,
