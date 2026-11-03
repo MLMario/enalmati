@@ -9,8 +9,9 @@ Closed items stay in the *Done* table with their close date.
 |---|---|---|---|
 | B-002 | Inventory reusable assets: extract colour tokens, fonts, breathing animation into a short note. Images already extracted. | in progress | Brand base decided: forest green (D-016) |
 | B-004 | Send Carolyn batch: Q-11, Q-12, Q-13 (+ Q-2 if GA4 has no baseline). | in progress | Ready: `docs/carolyn/2026-11-02-preguntas.md`. Mario sends it after sharing the draft page (Share menu). |
-| B-009 | Review alternative design styles; make a few new drafts from `drafts/borrador-1/` content (same copy, new look). | todo | **Next session.** May supersede D-016 |
+| B-009 | Review alternative design styles; make a few new drafts from `drafts/borrador-1/` content (same copy, new look). | in progress | Explorer with 6 symbol-led styles: https://claude.ai/artifact/VBJkjxUQA5whAuAdPvtEx8 · brief `docs/design/style-brief-2026-11-03.md`. **Next: Mario picks one (or a mix)**, then log a decision that supersedes D-016 |
 | B-007 | Set final design tokens in `src/styles/tokens.css` from the chosen mix; drop magenta as lead. | todo | After B-009 picks the style |
+| B-034 | Draw the final custom symbol set for the chosen style (one stroke/fill system, every symbol mapped to content; no yoga-pose figures except seated lotus, D-032). | todo | After B-009. Base: the shared set in the explorer |
 | B-008 | Decide on the AI-looking photos (L-005): keep, label as illustrative, or replace. | todo | Before launch |
 
 ## Phase 2 — Copy deck

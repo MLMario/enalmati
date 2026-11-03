@@ -59,3 +59,11 @@ lives in git; this is what changed and why it matters.
 - Carolyn question batch 1 written: `docs/carolyn/2026-11-02-preguntas.md`.
 - `CLAUDE.md`: added `drafts/` and `docs/carolyn/` to the file map.
 - STATUS/BACKLOG: next session explores new design styles (B-009); B-007 waits for it.
+
+## 2026-11-03 (session 5)
+
+- B-009 started after new feedback: minimalist palette, symbols as decoration, no yoga-pose figures except the seated lotus figure and the lotus (D-032).
+- Researched symbol-led design styles; brief written: `docs/design/style-brief-2026-11-03.md` (6 styles, shared symbol set, styles left out, sources).
+- Style explorer published: https://claude.ai/artifact/VBJkjxUQA5whAuAdPvtEx8 (source `drafts/estilos/`). Six styles (Línea serena, Noche celeste, Geometría sagrada, Zen ensō, Emblema plano, Raíz ayurvédica), each a live homepage preview with the borrador 1 copy and WhatsApp links, a desktop/phone toggle, and a brief per style (palette, type, symbols, HR fit, risk).
+- Open question Q-15 added (Om on the site).
+- `CLAUDE.md`: added `drafts/estilos/` and `docs/design/` to the file map.

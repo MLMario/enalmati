@@ -1,0 +1,560 @@
+<title>En Almati Style Explorer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500&family=Source+Sans+3:wght@400;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Marcellus&family=Mulish:wght@400;600;700&family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Quicksand:wght@600;700&family=Nunito+Sans:wght@400;600;700&family=Tenor+Sans&family=Hind:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@600&text=%E0%A5%90&display=swap">
+<style>
+/* Layout: explorer chrome (neutral, themed) → style picker cards → brief panel + live preview frame with desktop/phone toggle. Previews commit to their own palettes. */
+:root{
+  --bg:#f2f4f2; --surface:#ffffff; --surface-2:#e8ece9; --fg:#1b211e; --muted:#58635d; --line:#d6ddd8; --accent:#2c4a2e; --accent-ink:#ffffff;
+  --ok:#2f6b3a; --no:#a3342a; --warn:#8a6116;
+  --ui:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --om:'Noto Serif Devanagari','Kohinoor Devanagari','Mangal',serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121614; --surface:#1a1f1c; --surface-2:#232a26; --fg:#e6ebe7; --muted:#9aa69f; --line:#2e3732; --accent:#a8c9a9; --accent-ink:#10140f;
+  --ok:#8fc79a; --no:#ee8f84; --warn:#e2bb6c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121614; --surface:#1a1f1c; --surface-2:#232a26; --fg:#e6ebe7; --muted:#9aa69f; --line:#2e3732; --accent:#a8c9a9; --accent-ink:#10140f;
+  --ok:#8fc79a; --no:#ee8f84; --warn:#e2bb6c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.shell{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 72px;display:flex;flex-direction:column;gap:48px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}
+.lbl{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* intro */
+.intro{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px 56px;align-items:end}
+.intro h1{font-size:clamp(2rem,4vw,3rem);font-weight:600;letter-spacing:-.02em}
+.intro .lead{color:var(--muted);max-width:38em;margin-top:14px}
+.facts{display:flex;flex-direction:column;gap:10px;font-size:15px}
+.facts div{display:flex;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.facts dt{flex:0 0 7.5em;color:var(--muted)}
+.facts dd{margin:0;min-width:0}
+@media (max-width:820px){.intro{grid-template-columns:1fr}}
+
+/* symbol rules */
+.rules{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:20px}
+@media (max-width:900px){.rules{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.panel h2{font-size:20px;font-weight:600}
+.symgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}
+.symcell{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 10px;border-radius:10px;background:var(--surface-2);text-align:center;font-size:13px;line-height:1.25}
+.symcell small{color:var(--muted);font-size:11.5px}
+.symcell .sym{width:40px;height:40px;color:var(--fg)}
+.symcell.caution{outline:1.5px dashed var(--warn);outline-offset:-1.5px}
+.ruleslist{display:flex;flex-direction:column;gap:14px;font-size:15px}
+.ruleslist li{list-style:none;display:flex;gap:10px}
+.ruleslist ul{margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.mark{flex:none;font-family:var(--mono);font-weight:500;font-size:13px;width:1.6em}
+.mark.no{color:var(--no)} .mark.ok{color:var(--ok)} .mark.warn{color:var(--warn)}
+.sym .f,.sym .f2,.sym .l{fill:none;stroke:currentColor;stroke-width:var(--sw,1.5);stroke-linecap:round;stroke-linejoin:round}
+.sym .b{fill:currentColor;stroke:none}
+.sym .g{fill:currentColor;font-family:var(--om);font-weight:600}
+.sym .dk{fill:currentColor;stroke:none}
+.sym .dl{fill:none;stroke:currentColor;stroke-width:var(--sw,1.5)}
+
+/* picker */
+.pick-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px 24px;margin-bottom:16px}
+.pick-head h2{font-size:clamp(1.5rem,2.6vw,2rem);font-weight:600}
+.picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.pcard{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:10px;padding:12px 12px 14px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line);transition:border-color .15s,transform .15s}
+.pcard:hover{border-color:var(--muted)}
+.pcard:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pcard[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent) inset}
+.pcard .thumb{aspect-ratio:16/10;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pcard .thumb .sym{height:86%;width:auto;--sw:1.3}
+.pcard .nm{font-weight:600;font-size:16px;line-height:1.2}
+.pcard .tg{font-size:13px;color:var(--muted);line-height:1.35}
+.dots{display:flex;gap:4px}
+.dots i{width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1px rgba(127,127,127,.35) inset}
+
+/* brief + preview */
+.stage{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:980px){.stage{grid-template-columns:1fr}}
+.brief{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);gap:20px}
+@media (max-width:980px){.brief{position:static}}
+.brief h2{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.brief .orig{color:var(--muted);font-size:15px;margin-top:6px}
+.bsec{display:flex;flex-direction:column;gap:8px;font-size:15px}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px}
+.sw{display:flex;flex-direction:column;gap:4px;font-size:12px;line-height:1.25}
+.sw i{display:block;height:36px;border-radius:7px;box-shadow:0 0 0 1px rgba(127,127,127,.3) inset}
+.sw code{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.typespec{display:flex;flex-direction:column;gap:6px}
+.typespec div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.typespec span:last-child{color:var(--muted);text-align:right}
+.bsec ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px}
+.fit{display:flex;flex-direction:column;gap:10px}
+.fit p{display:flex;gap:10px}
+.bsym{display:flex;flex-wrap:wrap;gap:6px}
+.bsym span{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:8px}
+.bsym .sym{width:30px;height:30px}
+
+.viewer{display:flex;flex-direction:column;gap:12px;min-width:0}
+.vbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;padding:3px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line)}
+.seg button{all:unset;cursor:pointer;padding:7px 16px;border-radius:999px;font-size:14px;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg button:focus-visible{outline:2px solid var(--accent)}
+.frame{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--surface-2);margin-inline:auto;width:100%;transition:max-width .25s}
+.frame.phone{max-width:390px;border-radius:28px;border-width:8px;border-color:var(--fg)}
+@media (prefers-reduced-motion:reduce){.frame,.pcard{transition:none}}
+
+.foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:20px}
+.foot .panel{font-size:15px}
+.foot ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px}
+.foot a{color:var(--fg)}
+.foot .src{font-size:13.5px;color:var(--muted);word-break:break-word}
+.foot .src a{color:var(--muted)}
+
+/* ================= PREVIEW (shared skeleton) ================= */
+.pv{container-type:inline-size;background:var(--p-bg);color:var(--p-ink);font-family:var(--p-body);font-size:16px;line-height:1.6;--isz:40px;overflow:hidden}
+.pv *{box-sizing:border-box}
+.pv .in{max-width:1080px;margin:0 auto;padding-inline:clamp(18px,5cqw,52px)}
+.pv h1,.pv h2,.pv h3{font-family:var(--p-display);font-weight:var(--p-dw,400);color:var(--p-head);margin:0;text-wrap:balance;letter-spacing:var(--p-dls,0)}
+.pv p{margin:0}
+.pv a{color:inherit}
+.pv .sym{width:var(--isz);height:var(--isz);color:var(--p-sym);flex:none;display:block}
+.pv .sym .f2{stroke:var(--p-acc2)}
+.pv .sym .dl{fill:var(--p-bg)}
+.pv .eb{font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--p-eb)}
+.pv .h2{font-size:clamp(1.7rem,4.2cqw,2.6rem);line-height:1.12}
+.pv .lede{color:var(--p-mut);max-width:34em}
+.pv .sec{padding-block:clamp(48px,8cqw,88px)}
+.pv .shead{display:flex;flex-wrap:wrap;gap:14px 48px;align-items:end;justify-content:space-between}
+.pv .shead > div{display:flex;flex-direction:column;gap:10px;min-width:0}
+.pv .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 22px;border-radius:var(--p-rb);background:var(--p-btn);color:var(--p-btn-ink);font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--p-btn);text-align:center;line-height:1.2}
+.pv .btn.gh{background:transparent;color:var(--p-head);border-color:var(--p-line-strong)}
+.pv .btn svg{flex:none}
+.pv .lk{font-weight:600;color:var(--p-head);text-underline-offset:4px}
+/* header */
+.pv .hd{border-bottom:1px solid var(--p-line)}
+.pv .hd .in{display:flex;align-items:center;justify-content:space-between;gap:12px 24px;padding-block:16px}
+.pv .logo{width:108px;aspect-ratio:600/198;background:var(--p-logo);-webkit-mask:url(img/logo.png) center/contain no-repeat;mask:url(img/logo.png) center/contain no-repeat;flex:none}
+.pv nav{display:flex;gap:22px;font-size:14px;font-weight:500}
+.pv nav a{text-decoration:none;color:var(--p-mut);white-space:nowrap}
+.pv .hd .btn{min-height:42px;padding:0 16px;font-size:14px}
+@container (max-width:760px){.pv nav{display:none}}
+/* hero */
+.pv .hero .hg{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:36px 48px;align-items:center;padding-block:clamp(40px,7cqw,76px) clamp(36px,6cqw,64px)}
+.pv .htxt{display:flex;flex-direction:column;gap:22px;min-width:0}
+.pv .chip{align-self:flex-start;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--p-eb);padding:6px 12px;border:1px solid var(--p-line-strong);border-radius:var(--p-rb)}
+.pv .hero h1{font-size:clamp(2.1rem,5.6cqw,3.9rem);line-height:1.06}
+.pv .hero h1 em{font-style:var(--p-em,italic);color:var(--p-em-c)}
+.pv .sub{font-size:clamp(16px,1.9cqw,18.5px);color:var(--p-mut);max-width:32em}
+.pv .acts{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.pv .nota{font-size:14px;color:var(--p-mut)}
+.pv .art{min-width:0;display:flex;justify-content:center}
+.pv .art .sym{width:100%;max-width:420px;height:auto;display:block;--sw:1.6}
+.pv .art .sym :is(.l,.f,.f2,.dl),.pcard .thumb .sym :is(.l,.f,.f2,.dl){vector-effect:non-scaling-stroke}
+@container (max-width:720px){.pv .hero .hg{grid-template-columns:1fr}.pv .art{order:-1}.pv .art svg{max-width:240px}}
+.pv .log{display:grid;margin-top:0;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;border-top:1px solid var(--p-line);border-bottom:1px solid var(--p-line)}
+.pv .log div{padding:16px 18px 16px 0;display:flex;flex-direction:column;gap:2px;min-width:0}
+.pv .log dt{font-size:13px;color:var(--p-mut)}
+.pv .log dd{margin:0;font-weight:600;color:var(--p-head);line-height:1.35}
+@container (max-width:720px){.pv .log{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* beneficios */
+.pv .ben{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:36px 28px;margin-top:44px}
+.pv .ben > div{display:flex;flex-direction:column;gap:12px;min-width:0}
+.pv .ben h3{font-size:21px;line-height:1.22}
+.pv .ben p{color:var(--p-mut);font-size:15px}
+/* experiencias */
+.pv .carr{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;margin-top:36px;padding-bottom:10px}
+.pv .card{flex:0 0 min(210px,72%);scroll-snap-align:start;display:flex;flex-direction:column;gap:8px}
+.pv .card .ph{aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;background:var(--p-card);border-radius:var(--p-rc)}
+.pv .card .ph .sym{--isz:44%;width:44%;height:auto;aspect-ratio:1}
+.pv .card .tp{font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--p-eb);margin-top:6px}
+.pv .card h3{font-size:19px;line-height:1.22}
+.pv .card .lk{font-size:14px}
+/* pasos */
+.pv .pasos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:32px 28px;margin:44px 0 0;padding:0;list-style:none}
+.pv .paso{display:flex;flex-direction:column;gap:12px}
+.pv .mk{display:flex;align-items:center;gap:12px}
+.pv .mk i{flex:1;border-top:1px solid var(--p-line-strong)}
+.pv .n{width:46px;height:46px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--p-btn);color:var(--p-btn-ink);font-family:var(--p-display);font-size:20px}
+.pv .paso.opc .n{background:transparent;color:var(--p-head);border:1.5px dashed var(--p-line-strong)}
+.pv .paso.opc .mk i{border-top-style:dashed}
+.pv .paso h3{font-size:21px;line-height:1.25}
+.pv .paso h3 small{font-family:var(--p-body);font-size:14px;color:var(--p-mut);font-weight:500}
+.pv .paso p{color:var(--p-mut);font-size:15px}
+.pv .mk .sym{--isz:46px}
+/* programas */
+.pv .planes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:44px}
+@container (max-width:760px){.pv .planes{grid-template-columns:1fr}}
+.pv .plan{display:flex;flex-direction:column;gap:12px;padding:26px 24px 24px;border-radius:var(--p-rc);background:var(--p-card);border:1px solid var(--p-line)}
+.pv .plan .top{display:flex;justify-content:space-between;align-items:start;gap:10px;min-height:56px}
+.pv .plan .top .sym{width:76px;height:57px}
+.pv .badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:var(--p-rb);background:var(--p-badge);color:var(--p-badge-ink);white-space:nowrap}
+.pv .dur{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--p-eb)}
+.pv .plan h3{font-size:30px;line-height:1.05}
+.pv .plan .desc{color:var(--p-mut);font-size:15px}
+.pv .plan .fr{flex:1;font-family:var(--p-display);font-style:var(--p-em,italic);font-size:17px;line-height:1.4;color:var(--p-em-c)}
+.pv .plan .btn{align-self:stretch}
+.pv .plan.dest{background:var(--p-dest);border-color:var(--p-dest)}
+.pv .plan.dest h3{color:var(--p-dest-head)}
+.pv .plan.dest .desc,.pv .plan.dest .dur{color:var(--p-dest-mut)}
+.pv .plan.dest .fr{color:var(--p-dest-em)}
+.pv .plan.dest .sym{color:var(--p-dest-sym)}
+.pv .plan.dest .sym .f2{stroke:var(--p-dest-sym2)}
+.pv .plan.dest .btn{background:var(--p-dest-btn);color:var(--p-dest-btn-ink);border-color:var(--p-dest-btn)}
+.pv .medida{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between;margin-top:16px;padding:24px;border-radius:var(--p-rc);border:1px solid var(--p-line-strong)}
+.pv .medida > div{flex:1 1 300px;display:flex;flex-direction:column;gap:4px}
+.pv .medida h3{font-size:22px}
+.pv .medida p{color:var(--p-mut);font-size:15px}
+/* cierre + footer */
+.pv .cierre .in{display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;padding-block:clamp(56px,9cqw,96px)}
+.pv .cierre h2{font-size:clamp(1.7rem,4.4cqw,2.9rem);line-height:1.14;max-width:18em}
+.pv .cierre h2 em{font-style:var(--p-em,italic);color:var(--p-em-c)}
+.pv .cierre p{color:var(--p-mut);max-width:30em}
+.pv .cierre .sym{--isz:64px}
+.pv .ft{background:var(--p-ft);color:var(--p-ft-ink);font-size:14px}
+.pv .ft .in{display:flex;flex-wrap:wrap;gap:14px 36px;align-items:center;justify-content:space-between;padding-block:32px}
+.pv .ft .logo{background:var(--p-ft-ink);width:92px}
+.pv .ft .datos{display:flex;flex-wrap:wrap;gap:6px 26px}
+.pv .ft .base{flex-basis:100%;opacity:.75;font-size:12.5px;padding-top:14px;border-top:1px solid color-mix(in srgb,var(--p-ft-ink) 18%,transparent)}
+.pv .soft{background:var(--p-soft)}
+.pv .divider{display:flex;justify-content:center;padding-block:4px}
+.pv .divider svg{height:22px;width:auto;color:var(--p-sym)}
+
+/* ================= 1 · LÍNEA SERENA ================= */
+.s-linea{--p-bg:#f8f8f5;--p-ink:#2e3532;--p-head:#2c4a2e;--p-mut:#59605c;--p-sym:#2c4a2e;--p-acc2:#2c4a2e;--p-eb:#5c6b5d;--p-soft:#eceee8;--p-card:#ffffff;
+  --p-line:rgba(46,53,50,.14);--p-line-strong:rgba(44,74,46,.35);--p-btn:#2c4a2e;--p-btn-ink:#ffffff;--p-logo:#2c4a2e;--p-em-c:#2c4a2e;--p-em:italic;
+  --p-badge:#2c4a2e;--p-badge-ink:#fff;--p-dest:#ffffff;--p-dest-head:#2c4a2e;--p-dest-mut:#59605c;--p-dest-em:#2c4a2e;--p-dest-sym:#2c4a2e;--p-dest-sym2:#2c4a2e;--p-dest-btn:#2c4a2e;--p-dest-btn-ink:#fff;
+  --p-ft:#2c4a2e;--p-ft-ink:#e8eee7;--p-display:'Jost',system-ui,sans-serif;--p-dw:300;--p-body:'Source Sans 3',system-ui,sans-serif;--p-rb:999px;--p-rc:6px;--sw:1.35}
+.s-linea .plan.dest{border:1.5px solid #2c4a2e;box-shadow:0 0 0 4px #eceee8}
+.s-linea .hero h1 em{font-style:normal;font-weight:400}
+.s-linea .card .ph{background:transparent;border:1px solid var(--p-line)}
+.s-linea .ben .sym{--isz:44px}
+
+/* ================= 2 · NOCHE CELESTE ================= */
+.s-celeste{--p-bg:#1d2136;--p-ink:#ede6d6;--p-head:#f5efe1;--p-mut:#b9b4a9;--p-sym:#c9a45c;--p-acc2:#ede6d6;--p-eb:#c9a45c;--p-soft:#252a43;--p-card:#2f3556;
+  --p-line:rgba(237,230,214,.13);--p-line-strong:rgba(201,164,92,.5);--p-btn:#c9a45c;--p-btn-ink:#1d2136;--p-logo:#ede6d6;--p-em-c:#d8b878;
+  --p-badge:#c9a45c;--p-badge-ink:#1d2136;--p-dest:#ede6d6;--p-dest-head:#1d2136;--p-dest-mut:#4a4d5c;--p-dest-em:#7a5b1f;--p-dest-sym:#7a5b1f;--p-dest-sym2:#1d2136;--p-dest-btn:#1d2136;--p-dest-btn-ink:#ede6d6;
+  --p-ft:#161a2b;--p-ft-ink:#d9d3c4;--p-display:'Cormorant Garamond',Georgia,serif;--p-dw:500;--p-body:'Jost',system-ui,sans-serif;--p-rb:999px;--p-rc:999px 999px 10px 10px;--sw:1.15}
+.s-celeste .hero h1{font-size:clamp(2.4rem,6.2cqw,4.4rem);line-height:1}
+.s-celeste .plan{border-radius:200px 200px 12px 12px;padding-top:44px}
+.s-celeste .plan .top{justify-content:center;flex-direction:column;align-items:center;text-align:center}
+.s-celeste .plan{text-align:center}
+.s-celeste .medida{border-radius:12px}
+.s-celeste .paso .mk .sym{--isz:48px}
+.s-celeste .card h3,.s-celeste .ben h3,.s-celeste .paso h3{font-size:23px}
+
+/* ================= 3 · GEOMETRÍA SAGRADA ================= */
+.s-mandala{--p-bg:#ffffff;--p-ink:#1f2b2b;--p-head:#0f4c4a;--p-mut:#516160;--p-sym:#0f4c4a;--p-acc2:#c9812a;--p-eb:#0f4c4a;--p-soft:#eef4f3;--p-card:#ffffff;
+  --p-line:rgba(15,76,74,.14);--p-line-strong:rgba(15,76,74,.4);--p-btn:#0f4c4a;--p-btn-ink:#ffffff;--p-logo:#0f4c4a;--p-em-c:#0f4c4a;--p-em:normal;
+  --p-badge:#c9812a;--p-badge-ink:#ffffff;--p-dest:#0f4c4a;--p-dest-head:#ffffff;--p-dest-mut:#c7dcda;--p-dest-em:#f0c98f;--p-dest-sym:#ffffff;--p-dest-sym2:#f0c98f;--p-dest-btn:#ffffff;--p-dest-btn-ink:#0f4c4a;
+  --p-ft:#0c3b3a;--p-ft-ink:#dcebe9;--p-display:'Marcellus',Georgia,serif;--p-body:'Mulish',system-ui,sans-serif;--p-rb:999px;--p-rc:18px;--sw:1.2;--p-dls:.01em}
+.s-mandala .hero .hg{grid-template-columns:1fr;text-align:center;justify-items:center;position:relative}
+.s-mandala .hero .htxt{align-items:center;max-width:44em;position:relative;z-index:1}
+.s-mandala .hero .chip{align-self:center}
+.s-mandala .hero .acts{justify-content:center}
+.s-mandala .hero .art{position:absolute;inset:0;z-index:0;opacity:.16;pointer-events:none;align-items:center}
+.s-mandala .hero .art svg{max-width:640px;width:110%}
+@container (max-width:720px){.s-mandala .hero .art{order:0}.s-mandala .hero .art svg{max-width:520px;width:150%}}
+.s-mandala .shead{flex-direction:column;align-items:center;text-align:center}
+.s-mandala .shead .lede{text-align:center}
+.s-mandala .ben > div{align-items:center;text-align:center}
+.s-mandala .ben .sym,.s-mandala .ic{--isz:62px;padding:10px;border-radius:50%;border:1px solid var(--p-line-strong)}
+.s-mandala .card .ph{border-radius:50% 50% 18px 18px / 40% 40% 18px 18px}
+.s-mandala .pasos{text-align:center}
+.s-mandala .paso{align-items:center}
+.s-mandala .log{text-align:center}
+.s-mandala .log div{padding-inline:8px}
+.s-mandala .plan{text-align:center;align-items:center}
+.s-mandala .plan .top{flex-direction:column;align-items:center}
+
+/* ================= 4 · ZEN ENSŌ ================= */
+.s-zen{--p-bg:#eeede8;--p-ink:#1f1f1d;--p-head:#1f1f1d;--p-mut:#55534d;--p-sym:#1f1f1d;--p-acc2:#1f1f1d;--p-eb:#8f2f23;--p-soft:#e4e2db;--p-card:#f6f5f1;
+  --p-line:rgba(31,31,29,.14);--p-line-strong:rgba(31,31,29,.45);--p-btn:#1f1f1d;--p-btn-ink:#f6f5f1;--p-logo:#1f1f1d;--p-em-c:#8f2f23;--p-em:normal;
+  --p-badge:#b23a2a;--p-badge-ink:#fff;--p-dest:#1f1f1d;--p-dest-head:#f6f5f1;--p-dest-mut:#c3c0b8;--p-dest-em:#e9a497;--p-dest-sym:#f6f5f1;--p-dest-sym2:#f6f5f1;--p-dest-btn:#f6f5f1;--p-dest-btn-ink:#1f1f1d;
+  --p-ft:#1f1f1d;--p-ft-ink:#e4e2db;--p-display:'Shippori Mincho',Georgia,serif;--p-dw:500;--p-body:'Zen Kaku Gothic New',system-ui,sans-serif;--p-rb:0px;--p-rc:0px;--sw:1.6}
+.s-zen .hero .hg{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.s-zen .hero h1{font-size:clamp(2rem,5cqw,3.5rem);line-height:1.18}
+.s-zen .chip{border:0;padding:0;display:flex;align-items:center;gap:10px}
+.s-zen .chip::before{content:"";width:12px;height:12px;background:#b23a2a}
+.s-zen .eb{display:flex;align-items:center;gap:10px}
+.s-zen .eb::before{content:"";width:28px;border-top:1px solid currentColor}
+.s-zen .ben > div{border-left:1px solid var(--p-line-strong);padding-left:18px}
+.s-zen .card .ph{background:#f6f5f1}
+.s-zen .n{border-radius:0;background:transparent;color:var(--p-head);border:1.5px solid var(--p-head)}
+.s-zen .paso.opc .n{border-radius:0}
+
+/* ================= 5 · EMBLEMA PLANO ================= */
+.s-emblema{--p-bg:#ffffff;--p-ink:#2a1836;--p-head:#3b1f4a;--p-mut:#5f5368;--p-sym:#3b1f4a;--p-acc2:#3e9c9a;--p-eb:#2d7c7a;--p-soft:#f4f0f6;--p-card:#ffffff;
+  --p-line:rgba(59,31,74,.12);--p-line-strong:rgba(59,31,74,.3);--p-btn:#3b1f4a;--p-btn-ink:#ffffff;--p-logo:#3b1f4a;--p-em-c:#2d7c7a;--p-em:normal;
+  --p-badge:#3e9c9a;--p-badge-ink:#ffffff;--p-dest:#3b1f4a;--p-dest-head:#ffffff;--p-dest-mut:#d7cbe0;--p-dest-em:#9fe0dc;--p-dest-sym:#ffffff;--p-dest-sym2:#7fd0cc;--p-dest-btn:#ffffff;--p-dest-btn-ink:#3b1f4a;
+  --p-ft:#2a1836;--p-ft-ink:#ece3f1;--p-display:'Quicksand',system-ui,sans-serif;--p-dw:700;--p-body:'Nunito Sans',system-ui,sans-serif;--p-rb:14px;--p-rc:22px;--sw:2.2;--p-dls:-.01em}
+.s-emblema .sym .f{fill:currentColor;stroke:none}
+.s-emblema .sym .f2{fill:var(--p-acc2);stroke:none}
+.s-emblema .plan.dest .sym .f2{fill:var(--p-dest-sym2)}
+.s-emblema .sym .l{stroke-width:2.6}
+.s-emblema .sym .dl{stroke:none}
+.s-emblema .ben .sym{--isz:56px;padding:10px;border-radius:16px;background:var(--p-soft)}
+.s-emblema .card .ph{background:#ffffff}
+.s-emblema .plan{border:0;background:var(--p-soft)}
+.s-emblema .plan.dest{background:#3b1f4a}
+.s-emblema .medida{border:0;background:#eaf6f5}
+.s-emblema .hero h1{font-size:clamp(2rem,5.2cqw,3.6rem);line-height:1.08}
+
+/* ================= 6 · RAÍZ AYURVÉDICA ================= */
+.s-raiz{--p-bg:#fbf8f2;--p-ink:#3a2a22;--p-head:#4a2c21;--p-mut:#6a5a50;--p-sym:#4a2c21;--p-acc2:#b77a12;--p-eb:#8a5a0e;--p-soft:#f3ecdf;--p-card:#ffffff;
+  --p-line:rgba(74,44,33,.14);--p-line-strong:rgba(74,44,33,.38);--p-btn:#4a2c21;--p-btn-ink:#fbf8f2;--p-logo:#4a2c21;--p-em-c:#8a5a0e;--p-em:normal;
+  --p-badge:#c98a1b;--p-badge-ink:#2a1a12;--p-dest:#4a2c21;--p-dest-head:#fbf8f2;--p-dest-mut:#dccbbd;--p-dest-em:#e9b65a;--p-dest-sym:#fbf8f2;--p-dest-sym2:#e9b65a;--p-dest-btn:#e9b65a;--p-dest-btn-ink:#2a1a12;
+  --p-ft:#3a2219;--p-ft-ink:#efe3d6;--p-display:'Tenor Sans',Georgia,serif;--p-body:'Hind',system-ui,sans-serif;--p-rb:4px;--p-rc:4px;--sw:1.45}
+.s-raiz .hero .hg{grid-template-columns:1fr;text-align:center;justify-items:center}
+.s-raiz .hero .htxt{align-items:center;max-width:42em}
+.s-raiz .hero .chip{align-self:center;border-radius:0;border-width:1px 0}
+.s-raiz .hero .acts{justify-content:center}
+.s-raiz .hero .art{order:-1}
+.s-raiz .hero .art svg{max-width:230px}
+.s-raiz .hero h1{font-size:clamp(2rem,5.2cqw,3.5rem);text-transform:none}
+.s-raiz .h2{text-transform:uppercase;letter-spacing:.04em;font-size:clamp(1.5rem,3.6cqw,2.2rem)}
+.s-raiz .card .ph{border-radius:999px 999px 4px 4px}
+.s-raiz .plan .top .sym{width:76px}
+</style>
+
+<div class="shell">
+  <header class="intro">
+    <div>
+      <p class="lbl">En Almati · B-009 · 3 Nov 2026</p>
+      <h1 style="margin-top:10px">Six symbol-led styles for the new site</h1>
+      <p class="lead">Every option uses a minimal palette (one neutral, one ink, at most one accent) and a set of symbols for decoration. Each preview uses the copy and WhatsApp links from borrador&nbsp;1. Only the look changes. Por qué and Quiénes somos are left out of the previews to keep them short.</p>
+    </div>
+    <dl class="facts">
+      <div><dt>Brief asked for</dt><dd>Minimal colour, symbols as decoration, imagery like the Om, lotus emblem and line icon references</dd></div>
+      <div><dt>Rule</dt><dd>No people in yoga poses. Only the seated lotus figure and the lotus flower</dd></div>
+      <div><dt>Included</dt><dd>Only styles that already use this kind of imagery</dd></div>
+      <div><dt>Full brief</dt><dd><code style="font-family:var(--mono);font-size:13px">docs/design/style-brief-2026-11-03.md</code></dd></div>
+    </dl>
+  </header>
+
+  <section class="rules" aria-labelledby="h-rules">
+    <div class="panel">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="h-rules">Shared symbol set</h2>
+        <p style="color:var(--muted);font-size:15px">Drawn from your references. Each style redraws the same symbols in its own line weight or fill. Every symbol stands for something on the page.</p>
+      </div>
+      <div class="symgrid" id="symgrid"></div>
+    </div>
+    <div class="panel">
+      <h2>Rules</h2>
+      <ul class="ruleslist">
+        <li><span class="mark ok">✓</span><span>Lotus flower and the seated lotus figure (sukhasana / padmasana). Nothing else with a human body.</span></li>
+        <li><span class="mark no">✕</span><span>Standing or moving poses, like the tree-pose figure with arrows in the line-icon set, and any other asana silhouette.</span></li>
+        <li><span class="mark warn">!</span><span><strong>Om</strong> is a sacred symbol in Hinduism, Buddhism and Jainism. Use it once, large and upright. Never as a bullet, pattern, cropped or rotated.</span></li>
+        <li><span class="mark warn">!</span><span>Third eye and hamsa read as esoteric to an HR buyer. They are left out of all six styles.</span></li>
+        <li><span class="mark ok">✓</span><span>Plan cards show a lotus with 1, 3 or 6 petals, one per activity in the plan.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-pick">
+    <div class="pick-head">
+      <h2 id="h-pick">Pick a style</h2>
+      <p class="lbl" id="pick-count">6 options</p>
+    </div>
+    <div class="picker" id="picker" role="group" aria-label="Styles"></div>
+  </section>
+
+  <section class="stage" aria-live="polite">
+    <aside class="panel brief" id="brief"></aside>
+    <div class="viewer">
+      <div class="vbar">
+        <p class="lbl" id="vlabel">Preview</p>
+        <div class="seg" role="group" aria-label="Preview width">
+          <button type="button" id="w-desk" aria-pressed="true">Desktop</button>
+          <button type="button" id="w-phone" aria-pressed="false">Phone 390px</button>
+        </div>
+      </div>
+      <div class="frame" id="frame"><div class="pv" id="pv"></div></div>
+    </div>
+  </section>
+
+  <section class="foot">
+    <div class="panel">
+      <h2>Styles left out</h2>
+      <ul>
+        <li><strong>Glassmorphism and soft 3D icons.</strong> The current icon trend, but built on gradients and depth rather than symbols.</li>
+        <li><strong>Neo-brutalism.</strong> Heavy borders and loud colour clash with a calm, minimal palette, and it has no symbol tradition.</li>
+        <li><strong>Organic blobs and gradients.</strong> Common on wellness sites, but abstract. Symbols would have to be bolted on.</li>
+        <li><strong>Swiss / editorial grid.</strong> Very clear for HR, but it uses type and photos, not symbols.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h2>Recommendation</h2>
+      <p>Start from <strong>Línea serena</strong>. It keeps the brand green, its icons do real work (an HR reader scans benefits and activities by icon) and it reads the most corporate. Two ideas from other options carry over well: the <strong>moon phases for the four steps</strong> (Noche celeste) and the <strong>petal-count lotus</strong> on the plans. Keep Om out of the site until Carolyn approves it.</p>
+    </div>
+    <div class="panel">
+      <h2>Sources</h2>
+      <ul class="src">
+        <li><a href="https://getillustrations.com/illustration-pack/wellness-vector-illustrations" target="_blank" rel="noopener">getillustrations: wellness line packs</a>, <a href="https://dribbble.com/shaalk-studio" target="_blank" rel="noopener">Dribbble monoline work</a></li>
+        <li><a href="https://stock.adobe.com/images/set-of-line-art-celestial-and-esoteric-icons-vector-illustration-white-isolated-background-gold-color-palette-thin-lines-simple-shapes-minimalistic-design-elements-moon-phases-dreamcatcher-sy/832428253" target="_blank" rel="noopener">Adobe Stock: celestial line icons</a>, <a href="https://masterbundles.com/fem-creative-studio/celestial-magic-logo-branding-art" target="_blank" rel="noopener">celestial branding kit</a></li>
+        <li><a href="https://monsterspost.com/web-design-meditation-mandala-designs" target="_blank" rel="noopener">MonstersPost: mandala web design</a></li>
+        <li><a href="https://chrislemke.github.io/website_designs/examples/Japandi.html" target="_blank" rel="noopener">Japandi web demo</a>, <a href="https://chrislemke.github.io/website_designs/examples/Ink_Wash.html" target="_blank" rel="noopener">Sumi-e web demo</a>, <a href="https://www.creativebloq.com/design/why-japanese-minimalism-is-taking-over-western-design" target="_blank" rel="noopener">Creative Bloq on Japanese minimalism</a></li>
+        <li><a href="https://www.logogenie.com/blog/10-modern-logo-ideas-for-yoga-fitness-and-wellness-brands-in-2026" target="_blank" rel="noopener">LogoGenie: wellness emblems 2026</a>, <a href="https://thiink-portfolio.vercel.app/work/fem-flow" target="_blank" rel="noopener">Fem Flow identity</a></li>
+        <li><a href="https://www.therookies.co/projects/98466" target="_blank" rel="noopener">Bio-Tic Ayurvedic identity</a>, <a href="https://www.behance.net/gallery/88745151/Ansh-Ayurveda-Brand-Identity" target="_blank" rel="noopener">Ansh Ayurveda</a>, <a href="https://contra.com/p/OM7ecsRk-ayurvedagram-bali-rebranding" target="_blank" rel="noopener">Ayurvedagram Bali</a></li>
+        <li><a href="https://www.manypixels.co/blog/post/the-key-trends-in-icon-design-in-2022" target="_blank" rel="noopener">ManyPixels: icon trends 2026</a> (styles left out)</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+/* ---------- symbols (48×48 grid; classes: f primary shape, f2 secondary, l line, b brush fill, g glyph) ---------- */
+function pol(cx,cy,r,a){a=(a-90)*Math.PI/180;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+function fx(n){return Math.round(n*100)/100;}
+var S={
+  loto:function(){return '<path class="f" d="M24 9C29.5 15 29.5 26 24 35C18.5 26 18.5 15 24 9Z"/><path class="f2" d="M24 35C17 33 12.5 27 12 19C18 20.5 22.5 26 24 35Z"/><path class="f2" d="M24 35C31 33 35.5 27 36 19C30 20.5 25.5 26 24 35Z"/><path class="f" d="M24 36C15.5 37 8.5 33.5 4.5 27.5C11.5 26.5 18.5 29.5 24 36Z"/><path class="f" d="M24 36C32.5 37 39.5 33.5 43.5 27.5C36.5 26.5 29.5 29.5 24 36Z"/><path class="l" d="M13 40.5H35"/>';},
+  meditador:function(){return '<circle class="f" cx="24" cy="9.5" r="4"/><path class="f" d="M19.6 31C18.6 24 19.6 17.6 24 16.6C28.4 17.6 29.4 24 28.4 31Z"/><path class="l" d="M20.4 19.8C16.6 23 14.2 27.4 12.6 32.2M27.6 19.8C31.4 23 33.8 27.4 35.4 32.2"/><path class="f2" d="M5.5 36.6C11 31.6 19.5 31.2 24 34C28.5 31.2 37 31.6 42.5 36.6C36 40.2 12 40.2 5.5 36.6Z"/>';},
+  yinyang:function(){return '<circle class="l" cx="24" cy="24" r="16"/><path class="f" d="M24 8A16 16 0 0 1 24 40A8 8 0 0 1 24 24A8 8 0 0 0 24 8Z"/><circle class="dk" cx="24" cy="16" r="2.3"/><circle class="dl" cx="24" cy="32" r="2.3"/>';},
+  sol:function(){var s='<circle class="f2" cx="24" cy="24" r="7.5"/><path class="l" d="';for(var i=0;i<8;i++){var a=pol(24,24,12,i*45),b=pol(24,24,17.5,i*45);s+='M'+fx(a[0])+' '+fx(a[1])+'L'+fx(b[0])+' '+fx(b[1]);}return s+'"/>';},
+  luna:function(){return '<path class="f" d="M29 7.5A17 17 0 1 0 40.5 31A13.5 13.5 0 1 1 29 7.5Z"/>';},
+  estrella:function(){return '<path class="f" d="M24 9C25.2 20 28 22.8 39 24C28 25.2 25.2 28 24 39C22.8 28 20 25.2 9 24C20 22.8 22.8 20 24 9Z"/>';},
+  piedras:function(){return '<ellipse class="f" cx="24" cy="37.5" rx="13" ry="4.8"/><ellipse class="f2" cx="24" cy="28.2" rx="9.6" ry="4"/><ellipse class="f" cx="24" cy="20.2" rx="6.6" ry="3.2"/><ellipse class="f2" cx="24" cy="13.8" rx="3.8" ry="2.4"/>';},
+  balanza:function(){return '<path class="l" d="M24 11V39M16 40.5H32M9.5 15.5H38.5M9.5 15.5L5 26M9.5 15.5L14 26M38.5 15.5L34 26M38.5 15.5L43 26"/><circle class="f" cx="24" cy="9.5" r="2.2"/><path class="f2" d="M4 26H15C14 30.5 5 30.5 4 26Z"/><path class="f2" d="M33 26H44C43 30.5 34 30.5 33 26Z"/>';},
+  respiracion:function(){return '<path class="l" d="M6 17H27A5 5 0 1 0 22 12M6 25H35A5 5 0 1 1 30 30M6 33H20"/>';},
+  cuenco:function(){return '<path class="f" d="M9 25H39C39 33 32.5 39 24 39C15.5 39 9 33 9 25Z"/><path class="l" d="M19 41.5H29M16.5 19.5C20 15.5 28 15.5 31.5 19.5"/><path class="f2" d="M20.5 13.5C22.5 11.4 25.5 11.4 27.5 13.5" style="fill:none"/>';},
+  copo:function(){var s='<path class="l" d="';for(var k=0;k<6;k++){var ang=k*60,e=pol(24,24,16,ang),m=pol(24,24,10,ang),b1=pol(m[0],m[1],4.5,ang-45),b2=pol(m[0],m[1],4.5,ang+45);s+='M24 24L'+fx(e[0])+' '+fx(e[1])+'M'+fx(m[0])+' '+fx(m[1])+'L'+fx(b1[0])+' '+fx(b1[1])+'M'+fx(m[0])+' '+fx(m[1])+'L'+fx(b2[0])+' '+fx(b2[1]);}return s+'"/><circle class="f2" cx="24" cy="24" r="2.4"/>';},
+  espiral:function(){var p=[],max=4.6*Math.PI,a=16/max;for(var t=0;t<=max;t+=0.12){p.push(fx(24+a*t*Math.cos(t))+','+fx(24+a*t*Math.sin(t)));}return '<polyline class="l" points="'+p.join(' ')+'"/>';},
+  enso:function(){return '<path class="b" d="'+ensoPath(24,24,15.5,3.6)+'"/>';},
+  vela:function(){return '<path class="f2" d="M18.5 22.5H29.5V40H18.5Z"/><path class="l" d="M24 19.5V22.5M13 40.5H35"/><path class="f" d="M24 8.5C27.2 12.6 27.4 16.4 24 19C20.6 16.4 20.8 12.6 24 8.5Z"/>';},
+  mortero:function(){return '<path class="f" d="M8 24H40C39.4 32.6 32.6 38.4 24 38.4C15.4 38.4 8.6 32.6 8 24Z"/><path class="l" d="M17.5 41.5H30.5M27 22L37 8.5"/><path class="f2" d="M11.5 22C9.6 15.5 12.8 11 18.8 10.4C19.6 16.4 16.8 20.6 11.5 22Z"/>';},
+  om:function(){return '<text class="g" x="24" y="38" text-anchor="middle" font-size="36">\u0950</text>';},
+  flor:function(){var s='<circle class="l" cx="24" cy="24" r="7"/>';for(var i=0;i<6;i++){var c=pol(24,24,7,i*60);s+='<circle class="l" cx="'+fx(c[0])+'" cy="'+fx(c[1])+'" r="7"/>';}return s+'<circle class="f2" cx="24" cy="24" r="14"/>';}
+};
+function ensoPath(cx,cy,R,W){var o=[],n=[],a0=-62,sw=318,N=90;for(var i=0;i<=N;i++){var t=i/N,ang=a0+sw*t,w=W*Math.min(1,t*7)*Math.pow(1-t,.55)+W*.12,r=R+Math.sin(t*9)*R*.012;var p1=pol(cx,cy,r+w/2,ang),p2=pol(cx,cy,r-w/2,ang);o.push(fx(p1[0])+' '+fx(p1[1]));n.unshift(fx(p2[0])+' '+fx(p2[1]));}return 'M'+o.join('L')+'L'+n.join('L')+'Z';}
+function sym(name,cls){return '<svg class="sym'+(cls?' '+cls:'')+'" viewBox="0 0 48 48" aria-hidden="true">'+S[name]()+'</svg>';}
+function lotoN(n){var angs={1:[0],3:[-36,0,36],6:[-72,-43,-14,14,43,72]}[n],s='';angs.forEach(function(a,i){var c=(n===6?(i===2||i===3):(a===0))?'f':'f2';s+='<path class="'+c+'" transform="rotate('+a+' 32 44)" d="M32 44C27.4 35 27.4 21 32 12.5C36.6 21 36.6 35 32 44Z"/>';});return '<svg class="sym" viewBox="0 0 64 48" aria-hidden="true">'+s+'<path class="l" d="M20 46H44"/></svg>';}
+function moonPh(f){var rx=fx(Math.abs(16*(1-2*f))),sweep=f>0.5?1:0,d=f>=1?'<circle class="f" cx="24" cy="24" r="16"/>':'<path class="f" d="M24 8A16 16 0 0 1 24 40A'+rx+' 16 0 0 '+sweep+' 24 8Z"/>';return '<svg class="sym" viewBox="0 0 48 48" aria-hidden="true"><circle class="l" cx="24" cy="24" r="16"/>'+d+'</svg>';}
+function nest(name,x,y,size){return '<svg x="'+x+'" y="'+y+'" width="'+size+'" height="'+size+'" viewBox="0 0 48 48" overflow="visible">'+S[name]()+'</svg>';}
+function petal(r0,r1,w,ang,cls){var m1=r0+(r1-r0)*.32,m2=r1-(r1-r0)*.18;return '<path class="'+cls+'" transform="rotate('+ang+' 200 200)" d="M200 '+(200-r0)+'C'+(200+w)+' '+(200-m1)+' '+(200+w*.62)+' '+(200-m2)+' 200 '+(200-r1)+'C'+(200-w*.62)+' '+(200-m2)+' '+(200-w)+' '+(200-m1)+' 200 '+(200-r0)+'Z"/>';}
+function mandala(){var s='<g>';[[8,22,64,17,'f2'],[16,66,108,13,'f'],[24,112,142,7,'f2'],[12,150,192,22,'f']].forEach(function(r){for(var i=0;i<r[0];i++){s+=petal(r[1],r[2],r[3],i*360/r[0]+(r[0]===24?7.5:0),r[4]);}});s+='<circle class="l" cx="200" cy="200" r="18"/><circle class="l" cx="200" cy="200" r="64"/><circle class="l" cx="200" cy="200" r="110"/><circle class="l" cx="200" cy="200" r="146"/>';for(var i=0;i<48;i++){var p=pol(200,200,170,i*7.5);s+='<circle class="dk" cx="'+fx(p[0])+'" cy="'+fx(p[1])+'" r="1.6"/>';}return s+'</g>';}
+
+/* ---------- copy (from drafts/borrador-1; research/02) ---------- */
+var WA='https://wa.me/51996134087?text=';
+var M={general:'Hola%20En%20Almati%2C%20quiero%20saber%20m%C3%A1s%20sobre%20sus%20programas%20de%20bienestar%20para%20mi%20empresa.',piloto:'Hola%20En%20Almati%2C%20me%20interesa%20un%20programa%20piloto%20para%20mi%20equipo%20de%20__%20personas.',trimestral:'Hola%20En%20Almati%2C%20me%20interesa%20el%20programa%20trimestral%20para%20mi%20equipo%20de%20__%20personas.',semestral:'Hola%20En%20Almati%2C%20me%20interesa%20el%20programa%20semestral%20para%20mi%20equipo%20de%20__%20personas.',medida:'Hola%20En%20Almati%2C%20quiero%20armar%20un%20programa%20a%20medida%20para%20mi%20equipo.'};
+var BEN=[['yinyang','Bienestar emocional','Herramientas para gestionar el estrés y favorecer el equilibrio emocional.'],['sol','Enfoque y energía','Espacios para recuperar la concentración, la claridad mental y la vitalidad durante la jornada.'],['piedras','Bienestar físico','Prácticas que promueven el movimiento y ayudan a contrarrestar las molestias asociadas al trabajo sedentario.'],['loto','Desarrollo personal','Herramientas para fortalecer el autoconocimiento, la inteligencia emocional y la toma de decisiones.'],['balanza','Bienestar financiero','Conocimientos prácticos para mejorar la relación con el dinero y tomar decisiones financieras más informadas.']];
+var EXP=[['respiracion','Sesión vivencial','Breathwork'],['cuenco','Sesión vivencial','Sound healing'],['meditador','Sesión vivencial','Yin yoga'],['copo','Sesión vivencial','Inmersión en hielo',1],['espiral','Taller de desarrollo','Salud mental y arteterapia'],['enso','Taller de desarrollo','Mindfulness y presencia'],['balanza','Taller de desarrollo','Bienestar financiero'],['loto','Taller de desarrollo','Crecimiento personal e inteligencia emocional']];
+var PASOS=[['Nos escribes','Por WhatsApp conversamos sobre lo que tu equipo necesita según su situación actual.'],['Recibes tu propuesta','Te enviamos una propuesta a tu medida y definimos lugar, fecha y hora.'],['Brindamos el servicio','Llevamos a los especialistas y nos encargamos de toda la logística. Tu empresa solo pone el espacio y convoca.'],['Feedback','Recogemos la opinión del equipo para ver qué les pareció.',1]];
+var PLANES=[[1,'1 mes · 1 sesión o taller','Piloto','Una sesión vivencial o un taller de desarrollo, el que tu equipo elija.','Resultados que tu equipo siente desde la primera actividad.','Empezar aquí','piloto'],[3,'3 meses · 3 sesiones o talleres','Trimestral','Tres sesiones vivenciales o tres talleres de desarrollo, en la secuencia que tu equipo necesite.','Ritmo constante que crea hábito y bienestar visible en el equipo.','Quiero este programa','trimestral',1],[6,'6 meses · 6 sesiones o talleres','Semestral','Seis sesiones vivenciales o seis talleres de desarrollo a lo largo del semestre.','El programa más completo para instalar una verdadera cultura de bienestar.','Quiero este programa','semestral']];
+var WAI='<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>';
+function btn(label,key,cls){return '<a class="btn'+(cls?' '+cls:'')+'" href="'+WA+M[key]+'" target="_blank" rel="noopener">'+(cls==='gh'?'':WAI)+label+'</a>';}
+
+/* ---------- hero art per style (400×400) ---------- */
+function A(inner,cls){return '<svg class="sym '+(cls||'')+'" viewBox="0 0 400 400" aria-hidden="true">'+inner+'</svg>';}
+var ART={
+  linea:function(){return A('<circle class="l" cx="200" cy="196" r="168" style="stroke-width:1"/><circle class="l" cx="200" cy="196" r="150" style="stroke-width:.6;stroke-dasharray:2 7"/>'+nest('meditador',92,64,216)+nest('loto',148,300,104)+nest('estrella',318,70,34)+nest('estrella',62,112,22)+nest('luna',300,286,40));},
+  celeste:function(){var ph='';[0.2,0.4,0.6,0.8,1].forEach(function(f,i){var p=pol(200,226,190,-56+i*28);ph+='<g transform="translate('+fx(p[0]-14)+' '+fx(p[1]-14)+') scale(.58)">'+moonPh(f).replace(/^<svg[^>]*>|<\/svg>$/g,'')+'</g>';});return A('<path class="l" d="M96 392V214A104 104 0 0 1 304 214V392"/><path class="l" d="M114 392V218A86 86 0 0 1 286 218V392" style="stroke-dasharray:1 6"/>'+ph+nest('sol',170,140,60)+nest('meditador',122,232,156)+nest('estrella',40,130,26)+nest('estrella',334,150,20)+nest('estrella',350,300,14)+'<path class="l" d="M60 392H340"/>');},
+  mandala:function(){return A(mandala());},
+  zen:function(){return A('<path class="b" d="'+ensoPath(200,200,150,30)+'"/>'+nest('loto',236,236,96)+'<rect x="78" y="300" width="34" height="34" fill="#b23a2a"/>'+'<svg x="83" y="305" width="24" height="24" viewBox="0 0 48 48" style="color:#eeede8">'+S.loto()+'</svg>');},
+  emblema:function(){return A('<path d="M70 236A130 130 0 1 1 330 236" fill="none" stroke="var(--p-acc2)" stroke-width="16" stroke-linecap="round"/>'+'<g style="color:#a35fae">'+'<svg x="40" y="96" width="320" height="320" viewBox="0 0 48 48"><path fill="currentColor" d="M24 36C15.5 37 8.5 33.5 4.5 27.5C11.5 26.5 18.5 29.5 24 36Z"/><path fill="currentColor" d="M24 36C32.5 37 39.5 33.5 43.5 27.5C36.5 26.5 29.5 29.5 24 36Z"/><path fill="currentColor" d="M24 35C17 33 12.5 27 12 19C18 20.5 22.5 26 24 35Z"/><path fill="currentColor" d="M24 35C31 33 35.5 27 36 19C30 20.5 25.5 26 24 35Z"/></svg></g>'+'<svg x="108" y="70" width="184" height="184" viewBox="0 0 48 48" style="color:#3b1f4a"><circle cx="24" cy="9.5" r="4" fill="currentColor"/><path fill="currentColor" d="M19.4 31.5C18.2 24 19.4 17 24 16C28.6 17 29.8 24 28.6 31.5Z"/><path d="M20.4 19.8C16.6 23 14.2 27.4 12.6 32.2M27.6 19.8C31.4 23 33.8 27.4 35.4 32.2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path fill="currentColor" d="M5.5 36.6C11 31.6 19.5 31.2 24 34C28.5 31.2 37 31.6 42.5 36.6C36 40.2 12 40.2 5.5 36.6Z"/></svg>'+'<path d="M56 350C110 302 170 304 200 334C230 304 290 302 344 350C290 372 110 372 56 350Z" fill="var(--p-acc2)"/><path d="M200 334C228 316 270 316 300 334C270 346 230 346 200 334Z" fill="#2d7c7a"/>');},
+  raiz:function(){var s='';for(var i=0;i<24;i++){s+=petal(150,182,9,i*15,i%2?'f2':'f');}for(var j=0;j<24;j++){var p=pol(200,200,140,j*15+7.5);s+='<circle class="dk" cx="'+fx(p[0])+'" cy="'+fx(p[1])+'" r="2.2" style="fill:var(--p-acc2)"/>';}return A(s+'<circle class="l" cx="200" cy="200" r="128"/><circle class="l" cx="200" cy="200" r="194" style="stroke-width:.8"/><text class="g" x="200" y="268" text-anchor="middle" font-size="200" style="fill:var(--p-acc2)">\u0950</text>');}
+};
+
+/* ---------- styles ---------- */
+var STY=[
+ {id:'linea',name:'Línea serena',tag:'Monoline wellness icons, thin and consistent',swatch:['#f8f8f5','#2e3532','#2c4a2e','#eceee8'],
+  orig:'The fine-line icon style of your third reference: one stroke weight, round ends, no fill. Standard in wellness stock packs and app icon systems.',
+  pal:[['Papel','#F8F8F5'],['Grafito','#2E3532'],['Bosque','#2C4A2E'],['Salvia','#ECEEE8']],
+  type:[['Display','Jost Light'],['Body','Source Sans 3']],
+  syms:['meditador','loto','yinyang','sol','piedras','balanza','respiracion','cuenco','copo','espiral','enso','luna'],
+  how:['One icon per benefit, activity and plan, same 1.35 px stroke everywhere.','A single large line drawing in the hero: seated figure on a lotus inside a circle.','Brand green is the only colour. Grey does the rest.'],
+  good:'Closest to a corporate icon system. Icons help an HR reader scan. Keeps the logo green and is the easiest to build and extend.',
+  risk:'Can look like a stock template if the icons are generic. Needs one custom-drawn set used everywhere.',steps:'num',divider:null},
+ {id:'celeste',name:'Noche celeste',tag:'Boho celestial: sun, moon phases, stars, arches',swatch:['#1d2136','#ede6d6','#c9a45c','#252a43'],
+  orig:'Celestial line art from boho wellness branding kits: crescent moons, moon phases, sparkle stars and arched frames, usually gold on a dark ground.',
+  pal:[['Índigo','#1D2136'],['Hueso','#EDE6D6'],['Oro','#C9A45C'],['Índigo 2','#252A43']],
+  type:[['Display','Cormorant Garamond'],['Body','Jost']],
+  syms:['luna','estrella','sol','meditador','loto','cuenco','respiracion','copo'],
+  how:['Moon phases mark the four steps: waxing to full as the process completes.','Arched frames on cards and plans, echoing the hero arch.','Sparkle stars as small separators only.'],
+  good:'The most memorable option. A dark, quiet page suits sound healing and the "make a pause" message.',
+  risk:'Night sky and moon phases can read as astrology to an HR buyer. Gold on indigo needs care at small sizes.',steps:'moon',divider:'estrella'},
+ {id:'mandala',name:'Geometría sagrada',tag:'Radial mandala, chakra lotus, flower of life',swatch:['#ffffff','#0f4c4a','#c9812a','#eef4f3'],
+  orig:'Minimal sacred geometry: centred radial symmetry kept from mandalas, with the detailed iconography stripped out. Common in yoga and meditation studio identities.',
+  pal:[['Blanco','#FFFFFF'],['Teal hondo','#0F4C4A'],['Azafrán','#C9812A'],['Bruma','#EEF4F3']],
+  type:[['Display','Marcellus'],['Body','Mulish']],
+  syms:['flor','loto','yinyang','sol','piedras','balanza','meditador','enso'],
+  how:['One large mandala behind the hero headline, at low opacity.','Icons sit inside thin circles, like medallions.','Flower of life as the section divider. Saffron only inside symbols.'],
+  good:'Symmetry says balance without words. One strong visual signature.',
+  risk:'Centred layouts scan slower than left-aligned ones. Mandala detail gets busy if used more than once per screen.',steps:'num',divider:'flor'},
+ {id:'zen',name:'Zen ensō',tag:'Japandi and sumi-e: ensō, stones, empty space',swatch:['#eeede8','#1f1f1d','#b23a2a','#e4e2db'],
+  orig:'Japanese minimalism (Japandi, sumi-e ink): the hand-brushed ensō circle, balanced stones, lots of negative space, black ink and one red seal.',
+  pal:[['Arroz','#EEEDE8'],['Sumi','#1F1F1D'],['Bermellón','#B23A2A'],['Piedra','#E4E2DB']],
+  type:[['Display','Shippori Mincho'],['Body','Zen Kaku Gothic New']],
+  syms:['enso','piedras','loto','meditador','respiracion','cuenco','copo','balanza'],
+  how:['A large brushed ensō holds the hero. Small ensō for mindfulness.','A red square (the seal) marks the hero label only.','Square corners, hairline rules, no shadows.'],
+  good:'The most minimal and the calmest. Very little to maintain.',
+  risk:'The Japanese reference does not match Carolyn’s Thailand and Indonesia story. Red reads as an alert if used more than once.',steps:'num',divider:null},
+ {id:'emblema',name:'Emblema plano',tag:'Flat two-tone silhouettes, rounded and friendly',swatch:['#ffffff','#3b1f4a','#3e9c9a','#f4f0f6'],
+  orig:'The flat emblem of your second reference: solid silhouettes in two tones, a seated figure on a lotus under an arc. Common in wellness logos and app icons.',
+  pal:[['Blanco','#FFFFFF'],['Ciruela','#3B1F4A'],['Turquesa','#3E9C9A'],['Lavanda','#F4F0F6']],
+  type:[['Display','Quicksand Bold'],['Body','Nunito Sans']],
+  syms:['meditador','loto','yinyang','sol','piedras','balanza','cuenco','copo'],
+  how:['Solid filled icons in two tones, inside soft rounded tiles.','The hero is a full emblem: arc, lotus petals, figure, leaves.','Rounded corners everywhere.'],
+  good:'Reads well at small sizes and on phones. Friendly and easy to understand.',
+  risk:'Looks like a logo and competes with the En Almati wordmark. Plum and teal leave the brand green. Common in yoga studio templates.',steps:'num',divider:null},
+ {id:'raiz',name:'Raíz ayurvédica',tag:'Indian and Southeast Asian minimal: Om, lotus, mortar',swatch:['#fbf8f2','#4a2c21','#c98a1b','#f3ecdf'],
+  orig:'Minimal Ayurveda branding: small Indian-rooted elements (Om, lotus, mortar with herbs, petal borders) on a calm, modern base.',
+  pal:[['Marfil','#FBF8F2'],['Henna','#4A2C21'],['Cúrcuma','#C98A1B'],['Arena','#F3ECDF']],
+  type:[['Display','Tenor Sans'],['Body','Hind']],
+  syms:['om','loto','mortero','meditador','sol','balanza','cuenco','respiracion'],
+  how:['Om once, large, in a ring of petals at the top of the hero.','Petal borders as section dividers.','Turmeric only inside symbols, never for text.'],
+  good:'The only style here that uses Om natively. Links to Carolyn’s two years in Thailand and Indonesia (Bali).',
+  risk:'Om is sacred and can read as religious to HR in Lima. Ask Carolyn before using it. Without Om the style loses its anchor.',steps:'num',divider:'loto'}
+];
+var NAMES={meditador:'Seated lotus',loto:'Lotus',yinyang:'Yin-yang',sol:'Sun',luna:'Moon',estrella:'Star',piedras:'Stones',balanza:'Balance',respiracion:'Breath',cuenco:'Singing bowl',copo:'Snowflake',espiral:'Spiral',enso:'Ensō',vela:'Candle',mortero:'Mortar & herbs',om:'Om',flor:'Flower of life'};
+var USE={meditador:'Yin yoga',loto:'Personal growth',yinyang:'Emotional',sol:'Focus & energy',luna:'Steps (phases)',estrella:'Divider',piedras:'Physical',balanza:'Financial',respiracion:'Breathwork',cuenco:'Sound healing',copo:'Ice immersion',espiral:'Art therapy',enso:'Mindfulness',vela:'Optional',mortero:'Physical (alt.)',om:'Hero only',flor:'Divider'};
+
+/* ---------- render ---------- */
+function preview(st){
+  var bens=BEN.map(function(b){var ic=(st.id==='raiz'&&b[0]==='piedras')?'mortero':b[0];return '<div>'+sym(ic,'ic')+'<h3>'+b[1]+'</h3><p>'+b[2]+'</p></div>';}).join('');
+  var exps=EXP.map(function(e){return '<article class="card"><div class="ph">'+sym(e[0])+'</div><p class="tp">'+e[1]+'</p><h3>'+e[2]+'</h3>'+(e[3]?'<a class="lk" href="#'+st.id+'">Ver precauciones →</a>':'')+'</article>';}).join('');
+  var pasos=PASOS.map(function(p,i){var mark=st.steps==='moon'?moonPh([.25,.5,.75,1][i]):'<span class="n">'+(i+1)+'</span>';return '<li class="paso'+(p[2]?' opc':'')+'"><div class="mk">'+mark+'<i></i></div><h3>'+p[0]+(p[2]?' <small>(opcional)</small>':'')+'</h3><p>'+p[1]+'</p></li>';}).join('');
+  var planes=PLANES.map(function(p){return '<article class="plan'+(p[7]?' dest':'')+'"><div class="top">'+lotoN(p[0])+(p[7]?'<span class="badge">Más elegido</span>':'')+'</div><p class="dur">'+p[1]+'</p><h3>'+p[2]+'</h3><p class="desc">'+p[3]+'</p><p class="fr">'+p[4]+'</p>'+btn(p[5],p[6])+'</article>';}).join('');
+  var div=st.divider?'<div class="divider"><svg viewBox="0 0 168 24" aria-hidden="true">'+[0,1,2,3,4,5,6].map(function(i){return '<svg x="'+(i*24)+'" y="0" width="24" height="24" viewBox="0 0 48 48" class="sym" style="width:24px;height:24px;opacity:'+(i===3?1:.45)+'">'+S[st.divider]()+'</svg>';}).join('')+'</svg></div>':'';
+  return ''+
+  '<header class="hd"><div class="in"><span class="logo" role="img" aria-label="En Almati"></span><nav><a href="#'+st.id+'">Beneficios</a><a href="#'+st.id+'">Experiencias</a><a href="#'+st.id+'">Cómo funciona</a><a href="#'+st.id+'">Programas</a><a href="#'+st.id+'">Preguntas</a></nav>'+btn('WhatsApp','general')+'</div></header>'+
+  '<section class="hero"><div class="in hg"><div class="htxt"><p class="chip">Para Recursos Humanos y gerencia</p><h1>Cuidamos de las personas que hacen <em>crecer</em> tu empresa</h1><p class="sub">Programas de bienestar integral que combinan salud física y mental, bienestar emocional, educación financiera y desarrollo personal. Diseñados a medida de cada organización y sus equipos.</p><div class="acts">'+btn('Pide tu propuesta por WhatsApp','general')+'<a class="lk" href="#'+st.id+'">Ver programas →</a></div><p class="nota">Te enviamos una propuesta a tu medida en 24 horas.</p></div><div class="art">'+ART[st.id]()+'</div></div>'+
+  '<div class="in"><dl class="log"><div><dt>Duración</dt><dd>60 o 90 min, tú eliges</dd></div><div><dt>Grupo</dt><dd>10 a 30 personas</dd></div><div><dt>Dónde</dt><dd>Tu oficina o un espacio externo</dd></div><div><dt>Tu empresa pone</dt><dd>Solo una sala libre</dd></div></dl></div></section>'+
+  '<section class="sec"><div class="in"><div class="shead"><div><p class="eb">Beneficios</p><h2 class="h2">Lo que gana tu empresa</h2></div><p class="lede">Bienestar físico y mental, salud emocional, educación financiera y desarrollo personal en una sola propuesta.</p></div><div class="ben">'+bens+'</div></div></section>'+div+
+  '<section class="sec soft"><div class="in"><div class="shead"><div><p class="eb">Nuestras experiencias</p><h2 class="h2">Sesiones vivenciales y talleres de desarrollo</h2></div><p class="lede">Especialistas seleccionados por En Almati, cada uno experto en su práctica.</p></div><div class="carr">'+exps+'</div></div></section>'+
+  '<section class="sec"><div class="in"><div class="shead"><div><p class="eb">Así de fácil</p><h2 class="h2">Cómo funciona</h2></div></div><ol class="pasos">'+pasos+'</ol></div></section>'+div+
+  '<section class="sec soft"><div class="in"><div class="shead"><div><p class="eb">Programas</p><h2 class="h2">Programas</h2></div><p class="lede">Empieza con un piloto, ve cómo responde tu equipo y luego pasa a un plan trimestral o semestral. Cada plan puede ser de sesiones vivenciales o de talleres de desarrollo; tu empresa elige si cada actividad dura 60 o 90 minutos.</p></div><div class="planes">'+planes+'</div><div class="medida"><div><h3>Programa a medida</h3><p>Cuéntanos cómo es tu equipo y creamos el programa perfecto, combinando sesiones y talleres si lo necesitas.</p></div>'+btn('Diseñemos tu programa','medida','gh')+'</div></div></section>'+
+  '<section class="cierre"><div class="in">'+sym(st.id==='zen'?'enso':(st.id==='celeste'?'luna':'loto'))+'<h2>Detrás de cada empresa hay personas. <em>Cuidar de ellas también es una forma de crecer.</em></h2><p>Cuéntanos sobre tu equipo y te enviamos una propuesta a tu medida en 24 horas.</p>'+btn('Escríbenos por WhatsApp','general')+'</div></section>'+
+  '<footer class="ft"><div class="in"><span class="logo" role="img" aria-label="En Almati"></span><div class="datos"><span>WhatsApp +51 996 134 087</span><span>Correo: info@enalmati.com</span><span>Preguntas frecuentes</span></div><p class="base">© 2026 En Almati · Bienestar integral para empresas · Lima</p></div></footer>';
+}
+function brief(st){
+  var sw=st.pal.map(function(c){return '<div class="sw"><i style="background:'+c[1]+'"></i><span>'+c[0]+'</span><code>'+c[1]+'</code></div>';}).join('');
+  var ty=st.type.map(function(t){return '<div><span>'+t[0]+'</span><span>'+t[1]+'</span></div>';}).join('');
+  var sy=st.syms.map(function(n){return '<span title="'+NAMES[n]+'" style="background:'+st.swatch[0]+';color:'+st.swatch[2]+'">'+sym(n)+'</span>';}).join('');
+  return '<div><p class="lbl">Style '+(STY.indexOf(st)+1)+' of '+STY.length+'</p><h2 style="margin-top:6px">'+st.name+'</h2><p class="orig">'+st.orig+'</p></div>'+
+   '<div class="bsec"><p class="lbl">Palette</p><div class="swatches">'+sw+'</div></div>'+
+   '<div class="bsec"><p class="lbl">Type</p><div class="typespec">'+ty+'</div></div>'+
+   '<div class="bsec"><p class="lbl">Symbols</p><div class="bsym s-'+st.id+'" style="--p-acc2:'+st.swatch[1]+'">'+sy+'</div><ul>'+st.how.map(function(h){return '<li>'+h+'</li>';}).join('')+'</ul></div>'+
+   '<div class="bsec fit"><p class="lbl">For an HR buyer</p><p><span class="mark ok">+</span><span>'+st.good+'</span></p><p><span class="mark no">−</span><span>'+st.risk+'</span></p></div>';
+}
+var picker=document.getElementById('picker'),pv=document.getElementById('pv'),br=document.getElementById('brief'),vlabel=document.getElementById('vlabel');
+picker.innerHTML=STY.map(function(st){return '<button type="button" class="pcard" data-id="'+st.id+'" aria-pressed="false"><span class="thumb pv s-'+st.id+'" style="background:'+st.swatch[0]+'">'+ART[st.id]()+'</span><span class="nm">'+st.name+'</span><span class="tg">'+st.tag+'</span><span class="dots">'+st.swatch.map(function(c){return '<i style="background:'+c+'"></i>';}).join('')+'</span></button>';}).join('');
+picker.addEventListener('click',function(e){var b=e.target.closest('.pcard');if(b){location.hash=b.dataset.id;}});
+function show(id){var st=STY.filter(function(s){return s.id===id;})[0]||STY[0];
+  pv.className='pv s-'+st.id;pv.innerHTML=preview(st);br.innerHTML=brief(st);vlabel.textContent='Preview · '+st.name;
+  [].forEach.call(picker.children,function(b){b.setAttribute('aria-pressed',String(b.dataset.id===st.id));});}
+function route(){var h=location.hash.slice(1);show(h);}
+window.addEventListener('hashchange',function(){route();document.querySelector('.stage').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
+route();
+/* symbol grid */
+var order=['meditador','loto','yinyang','sol','luna','estrella','piedras','balanza','respiracion','cuenco','copo','espiral','enso','flor','mortero','om'];
+document.getElementById('symgrid').innerHTML=order.map(function(n){return '<div class="symcell'+(n==='om'?' caution':'')+'">'+sym(n)+'<span>'+NAMES[n]+'</span><small>'+USE[n]+'</small></div>';}).join('');
+/* width toggle */
+var fr=document.getElementById('frame'),wd=document.getElementById('w-desk'),wp=document.getElementById('w-phone');
+function setW(phone){fr.classList.toggle('phone',phone);wd.setAttribute('aria-pressed',String(!phone));wp.setAttribute('aria-pressed',String(phone));try{localStorage.setItem('ea-w',phone?'p':'d');}catch(e){}}
+wd.addEventListener('click',function(){setW(false);});wp.addEventListener('click',function(){setW(true);});
+try{if(localStorage.getItem('ea-w')==='p'){setW(true);}}catch(e){}
+})();
+</script>
