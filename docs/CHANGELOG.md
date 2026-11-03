@@ -47,3 +47,15 @@ lives in git; this is what changed and why it matters.
 - Decisions D-023…D-026 (Conócenos, no English, nothing virtual, no social links). Q-1/4/6/7 closed; Q-11…13 added for after draft approval; Q-5 flagged.
 - D-027: keep the current site's four claims; `CLAUDE.md` rule updated; Q-5 closed.
 - Programas redrawn in two tracks with current-site plan copy and "Más elegido"; Beneficios cut to 5; carousel embedded in the merged page. STATUS rewritten for end of session 3.
+
+## 2026-11-02 (session 4)
+
+- Canvas `Mezcla`: Programas merged into one track (Piloto · Trimestral · Semestral); hero box duration "60 o 90 min, tú eliges"; plan WhatsApp messages merged.
+- Canvas `Experiencias`: card labels show type only, no duration.
+- Decisions D-028…D-030.
+- Plans corrected: each is sessions **or** workshops (1 / 3 / 6), not a mix.
+- Mario approved the first draft (D-031).
+- Shareable draft page published: https://claude.ai/artifact/1qQcrUe6Y1Pj7f7TqqdyoT (source in `drafts/borrador-1/`). Adds Por qué (5 differentiators + RR. HH. box), Quiénes somos (bio summary, no photo), Cierre band, Footer, FAQ view (`#preguntas`, 6 questions incl. ice safety). All 6 WhatsApp messages wired.
+- Carolyn question batch 1 written: `docs/carolyn/2026-11-02-preguntas.md`.
+- `CLAUDE.md`: added `drafts/` and `docs/carolyn/` to the file map.
+- STATUS/BACKLOG: next session explores new design styles (B-009); B-007 waits for it.

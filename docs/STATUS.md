@@ -1,50 +1,48 @@
 # Status
 
-_Snapshot — rewrite, don't append. Last updated: 2026-11-03 (end of session 3)._
+_Snapshot — rewrite, don't append. Last updated: 2026-11-03 (end of session 4)._
 
-**Phase:** 1 Discovery (done except Q-2) · first-draft design on the style canvas (in progress) ·
-3 Build foundation (built and tested locally; Vercel deferred).
+**Phase:** 1 Discovery and design: **first draft approved** (D-031); waiting on Carolyn (batch 1).
+3 Build foundation: built and tested locally; Vercel deferred.
 
 ## Where we are
 
-- Astro scaffold (SPEC-001 / PLAN-001) built and tested locally (steps 1–7). Step 9 (Vercel)
-  **deferred** (D-018). `main` on https://github.com/MLMario/enalmati.git.
-- Style canvas: https://claude.ai/artifact/AzYAou8Jdw1SSW9f7J94uP (private). New row
-  "Mezcla 1 + 3" (Bosque look + Claridad structure, D-016):
-  - `Mezcla` (desktop) / `Mezcla-movil` (375px): header, hero + logistics box, Beneficios (5),
-    Experiencias carousel (imported), Cómo funciona (4 steps), Programas in two tracks.
-  - `Experiencias` (desktop + 375px): carousel of 8 activity cards, no benefits, no chips (D-020).
-  - Programas: Sesiones (Conócenos · Trimestral · Semestral) and Talleres (Piloto · Trimestral ·
-    Semestral) + "a medida" strip. Plan copy and "Más elegido" badges come from the current site
-    (D-023, D-027). Each button has its own WhatsApp message.
-- Page structure agreed: one main scroll page + separate FAQ page (D-022).
-  Main page: Header → Hero → Beneficios → Experiencias → Cómo funciona → Programas →
-  Por qué (incl. RR. HH. simplicity, D-021) → Quiénes somos → Cierre → Footer.
-- Decisions this session: D-018…D-027. `CLAUDE.md` claims rule updated (D-027).
-- Nothing rendered/verified by Claude on the canvas; Mario reviewed visually.
+- **Shareable draft page:** https://claude.ai/artifact/1qQcrUe6Y1Pj7f7TqqdyoT (private until Mario
+  shares it). Source: `drafts/borrador-1/` (publish from there). All 9 sections + FAQ view
+  (`#preguntas`), working WhatsApp buttons (general, Piloto, Trimestral, Semestral, a medida).
+- **Style canvas:** https://claude.ai/artifact/AzYAou8Jdw1SSW9f7J94uP. `Mezcla` has Header → Programas
+  only; Por qué, Quiénes somos, Cierre, Footer and FAQ exist only on the draft page.
+- **Programas** (D-028…D-030): one set of plans: Piloto (1 mes · 1 sesión o taller) · Trimestral
+  (3, Más elegido) · Semestral (6). Each plan is all sessions or all workshops; the company picks
+  60 or 90 min per activity. Trimestral count = 3 pending Carolyn (Mario wrote "2").
+- **Carolyn batch 1** written: `docs/carolyn/2026-11-02-preguntas.md` (Spanish, by section).
+- Astro scaffold (SPEC-001) built and tested; `main` on GitHub. Vercel deferred (D-018).
 
 ## Blockers
 
 | ID | Blocker | Blocks | Next action |
 |---|---|---|---|
-| — | None. | | |
+| — | Carolyn's answers to batch 1 | Copy deck (B-010), photos (B-008) | Mario shares the draft page and sends the batch |
 
 ## Open questions
 
 | ID | Question | For | Blocks |
 |---|---|---|---|
-| Q-2 | WhatsApp conversations per month today? Check GA4 `G-9WZYHE19G0` first (L-004). | Us → Carolyn | Measuring success |
-| Q-11 | Confirm plan contents (1/3/6 sessions or workshops over 1/3/6 months). Taken from the current site; not in Carolyn's answers. **After draft approval.** | Carolyn | Programas copy |
-| Q-12 | Photos for the 4 workshops; keep or replace AI-looking photos (B-008). **After draft approval.** | Carolyn | Carousel, launch |
-| Q-13 | Carolyn approves our own phrasing (hero tag, section labels, card lines, button labels). **After draft approval.** | Carolyn | Copy deck |
-| Q-10 | When to set up Vercel (B-024)? Deferred; needed before sharing previews and before launch. | Us | Previews, launch |
-| Q-9 | Does Vercel support Node 26? If yes, move `.nvmrc` to 26 (D-017). | Us | Before launch |
+| Q-11 | Plan contents: 1/3/6 (Trimestral 3 or 2?), sessions *or* workshops per plan, 60/90 for every activity, "Más elegido", plan lines. Batch 1 §1. | Carolyn | Programas copy |
+| Q-12 | Workshop photos; keep/label/replace the AI-looking session photos (B-008). Batch 1 §2. | Carolyn | Carousel, launch |
+| Q-13 | Approve our own phrasing (listed per section) and merged WhatsApp messages (D-030). Batch 1 §4. | Carolyn | Copy deck |
+| Q-14 | Ice immersion: contraindications complete? Supervision, health form, time in water? Batch 1 §3. | Carolyn | FAQ |
+| Q-2 | WhatsApp conversations per month today. Batch 1 §5 — drop it if GA4 `G-9WZYHE19G0` already has a baseline (L-004). | Mario → Carolyn | Measuring success |
+| Q-10 | When to set up Vercel (B-024)? | Us | Previews, launch |
+| Q-9 | Does Vercel support Node 26? (D-017) | Us | Before launch |
 
 ## Next session — start here
 
-1. **B-006 (rest of first draft on the canvas):** add Por qué (5 differentiators + RR. HH.),
-   Quiénes somos (bio, no photo), Cierre band, Footer (email only) to `Mezcla`; draw the FAQ
-   page as its own artboard and point "Preguntas" / "Ver precauciones" to it.
-2. Mario reviews the full draft; then B-007 tokens and SPEC-002 copy deck.
-3. Canvas files are regenerated from scratch scripts that are not in the repo; edit the
-   artboards directly (read them from the canvas first).
+Goal: **review different design styles and make a few new drafts** (B-009).
+
+1. Use `drafts/borrador-1/` as the content base: same sections, copy and WhatsApp links; only the
+   look changes. Don't change copy while exploring styles (copy waits on Carolyn, batch 1).
+2. Make each new draft its own folder (`drafts/borrador-2/`, `-3/`…) and its own Artifact, or
+   artboards on the style canvas; decide with Mario at the start.
+3. If Mario picks a new direction, log a decision that supersedes D-016, then do B-007 (tokens).
+4. If Carolyn has answered batch 1 meanwhile: apply her answers to the chosen draft and log them.

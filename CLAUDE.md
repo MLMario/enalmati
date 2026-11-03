@@ -24,6 +24,8 @@ Success metric: more WhatsApp conversations started.
 |---|---|
 | `research/` | Source material: brief (`01`) and Carolyn's answers (`02`). Read-only; never edit. Where it conflicts with `DECISIONS.md`, the decision wins. |
 | `reference/current-site/` | Snapshot of the live site (2026-11-02) and its extracted images. Reference only; not deployed. |
+| `drafts/borrador-1/` | Source of the shareable draft page (Artifact https://claude.ai/artifact/1qQcrUe6Y1Pj7f7TqqdyoT). Publish from here. |
+| `docs/carolyn/` | Question batches sent to Carolyn (Spanish), by date. |
 | `docs/STATUS.md` | Current phase, blockers, open questions, next step |
 | `docs/BACKLOG.md` | Prioritized work items (`B-###`) |
 | `docs/DECISIONS.md` | Append-only decision log (`D-###`) |

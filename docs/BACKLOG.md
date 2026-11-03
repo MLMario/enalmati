@@ -8,18 +8,18 @@ Closed items stay in the *Done* table with their close date.
 | ID | Item | Status | Notes |
 |---|---|---|---|
 | B-002 | Inventory reusable assets: extract colour tokens, fonts, breathing animation into a short note. Images already extracted. | in progress | Brand base decided: forest green (D-016) |
-| B-004 | Send Carolyn batch: Q-11, Q-12, Q-13 (+ Q-2 if GA4 has no baseline). | todo | After Mario approves the first draft |
-| B-006 | Explore the 1+3 mix (D-016) on the style canvas: full hero + benefits + how it works + programs in one direction, desktop and 375px. | in progress | Hero, benefits, carousel, how it works, programs drawn. Left: Por qué, Quiénes somos, Cierre, Footer, FAQ page. **Next session.** Canvas: https://claude.ai/artifact/AzYAou8Jdw1SSW9f7J94uP |
-| B-007 | Set final design tokens in `src/styles/tokens.css` from the chosen mix; drop magenta as lead. | todo | After B-006 |
+| B-004 | Send Carolyn batch: Q-11, Q-12, Q-13 (+ Q-2 if GA4 has no baseline). | in progress | Ready: `docs/carolyn/2026-11-02-preguntas.md`. Mario sends it after sharing the draft page (Share menu). |
+| B-009 | Review alternative design styles; make a few new drafts from `drafts/borrador-1/` content (same copy, new look). | todo | **Next session.** May supersede D-016 |
+| B-007 | Set final design tokens in `src/styles/tokens.css` from the chosen mix; drop magenta as lead. | todo | After B-009 picks the style |
 | B-008 | Decide on the AI-looking photos (L-005): keep, label as illustrative, or replace. | todo | Before launch |
 
 ## Phase 2 — Copy deck
 
 | ID | Item | Status | Notes |
 |---|---|---|---|
-| B-010 | SPEC-002 copy deck: all Spanish copy for the 9 sections, every line traced to `research/02`. | todo | Needs B-003 |
+| B-010 | SPEC-002 copy deck: all Spanish copy for the 9 sections, every line traced to `research/02`. | todo | Start from the draft page text (`drafts/borrador-1/`) + Carolyn's answers to batch 1 |
 | B-011 | Write headline + subtitle from value prop (A1). | todo | Part of B-010 |
-| B-012 | FAQ page (own page, D-022) incl. ice immersion safety question with contraindications. | todo | Part of B-010; min group 10 |
+| B-012 | FAQ page (own page, D-022) incl. ice immersion safety question with contraindications. | todo | Drafted (6 questions) in `drafts/borrador-1/`; ice safety details pending Carolyn (batch 1, §3) |
 | B-013 | Carolyn approves copy deck. | todo | |
 
 ## Phase 3 — Build
@@ -28,7 +28,7 @@ Closed items stay in the *Done* table with their close date.
 |---|---|---|---|
 | B-020 | SPEC-001 site foundation: stack, structure, design tokens, Vercel setup. | in progress | Built, tested, pushed; left: Vercel (PLAN-001 step 9, deferred D-018) |
 | B-022 | Build sections 1–9 per copy deck. | todo | Split into specs once SPEC-001 is done |
-| B-023 | Footer: email, (social links if Q-6). | todo | |
+| B-023 | Footer: logo, WhatsApp number, email, FAQ link. No social links (D-026). | todo | Drafted in `drafts/borrador-1/` |
 | B-024 | Create GitHub remote and Vercel project; confirm branch previews work. | todo | GitHub done (`main` pushed); Vercel **deferred** (D-018, Q-10) |
 
 ## Phase 4 — QA & launch
@@ -44,6 +44,7 @@ Closed items stay in the *Done* table with their close date.
 
 | ID | Item | Closed |
 |---|---|---|
+| B-006 | First draft: canvas `Mezcla` + shareable draft page with all 9 sections and FAQ page. Approved (D-031). | 2026-11-02 |
 | B-000 | Project setup: folder rename, git, docs structure, templates. | 2026-11-02 |
 | B-005 | Pick a visual direction → mix of 1 + 3 (D-016). | 2026-11-02 |
 | B-003 | Resolve our own open questions Q-3, Q-4, Q-5, Q-7 (D-022…D-027). | 2026-11-03 |
