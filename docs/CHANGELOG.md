@@ -39,3 +39,11 @@ lives in git; this is what changed and why it matters.
   `CHANGELOG.md`, `LEARNINGS.md`, `PROCESS.md`.
 - Added templates: `docs/templates/spec.md`, `docs/templates/plan.md`.
 - Recorded decisions D-001…D-012, including group minimum = 10 and no virtual workshops.
+- Deferred Vercel setup (D-018); B-024 back to `todo`, open question Q-10 added. Next step is B-006.
+- Style canvas: added "Mezcla 1 + 3" artboards (desktop 1280 + phone 375) with hero + logistics box, benefits, how it works, programs (B-006). Benefits use Carolyn's full approved text; "Respondemos en minutos" replaced by the 24 h proposal promise (`research/02` §B4).
+- Style canvas: added "Experiencias" carousel artboards (desktop + 375px): 8 activities as cards without benefits (photo or green panel, type · duration, name), chips naming all activities by type, arrows + counter, one general WhatsApp CTA.
+- Carousel: removed the activity chips per Mario's canvas comment (D-020 updated).
+- Decisions D-021 (RR. HH. simplicity → Por qué) and D-022 (FAQ on its own page; closes Q-3).
+- Decisions D-023…D-026 (Conócenos, no English, nothing virtual, no social links). Q-1/4/6/7 closed; Q-11…13 added for after draft approval; Q-5 flagged.
+- D-027: keep the current site's four claims; `CLAUDE.md` rule updated; Q-5 closed.
+- Programas redrawn in two tracks with current-site plan copy and "Más elegido"; Beneficios cut to 5; carousel embedded in the merged page. STATUS rewritten for end of session 3.

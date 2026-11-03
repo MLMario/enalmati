@@ -38,9 +38,11 @@ Success metric: more WhatsApp conversations started.
 - **Spec → plan → build → verify → log.** Anything bigger than a copy fix gets a spec
   approved before building. See `docs/PROCESS.md`.
 - **Never invent content.** All copy comes from `research/02`. Editing for readability
-  is fine; new facts, numbers, testimonials or claims ("Más elegido", "Técnica comprobada",
-  "Resultados desde la primera sesión") are not. If content is missing, add an open
-  question to `STATUS.md` instead of filling the gap.
+  is fine; new facts, numbers, testimonials or claims are not. If content is missing, add an
+  open question to `STATUS.md` instead of filling the gap.
+  Exception (D-027): the current site's claims "Más elegido", "Técnica comprobada",
+  "Resultados desde la primera sesión" and "Resultados visibles desde el primer taller"
+  are kept by Mario's decision. Don't add new ones.
 - Site copy is in **Spanish**. Project docs are in English.
 - Every CTA goes to `https://wa.me/51996134087?text=<url-encoded message>` using the
   messages in `research/02` §B2. Email (`info@enalmati.com`) only in the footer.
